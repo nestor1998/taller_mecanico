@@ -1,0 +1,178 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Registrar Solicitud</li>
+    </ol>
+</nav>
+
+<h3>Registrar Solicitud de Trabajo</h3>
+
+{% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>Errores en el formulario:</strong>
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="mb-0">Datos del Cliente</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="{{ form.rut.id_for_label }}" class="form-label">{{ form.rut.label }}</label>
+                    {{ form.rut }}
+                    {% if form.rut.errors %}
+                        <div class="text-danger small">{{ form.rut.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="{{ form.nombre.id_for_label }}" class="form-label">{{ form.nombre.label }}</label>
+                    {{ form.nombre }}
+                    {% if form.nombre.errors %}
+                        <div class="text-danger small">{{ form.nombre.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="{{ form.telefono.id_for_label }}" class="form-label">{{ form.telefono.label }}</label>
+                    {{ form.telefono }}
+                    {% if form.telefono.errors %}
+                        <div class="text-danger small">{{ form.telefono.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="text-danger small">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="mb-0">Datos del Vehículo</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <label for="{{ form.patente.id_for_label }}" class="form-label">{{ form.patente.label }}</label>
+                    {{ form.patente }}
+                    {% if form.patente.errors %}
+                        <div class="text-danger small">{{ form.patente.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="{{ form.marca.id_for_label }}" class="form-label">{{ form.marca.label }}</label>
+                    {{ form.marca }}
+                    {% if form.marca.errors %}
+                        <div class="text-danger small">{{ form.marca.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="{{ form.modelo.id_for_label }}" class="form-label">{{ form.modelo.label }}</label>
+                    {{ form.modelo }}
+                    {% if form.modelo.errors %}
+                        <div class="text-danger small">{{ form.modelo.errors }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="{{ form.anio.id_for_label }}" class="form-label">{{ form.anio.label }}</label>
+                    {{ form.anio }}
+                    {% if form.anio.errors %}
+                        <div class="text-danger small">{{ form.anio.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="{{ form.kilometraje.id_for_label }}" class="form-label">{{ form.kilometraje.label }}</label>
+                    {{ form.kilometraje }}
+                    {% if form.kilometraje.errors %}
+                        <div class="text-danger small">{{ form.kilometraje.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="mb-0">Solicitud</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="{{ form.motivo.id_for_label }}" class="form-label">{{ form.motivo.label }}</label>
+                {{ form.motivo }}
+                {% if form.motivo.errors %}
+                    <div class="text-danger small">{{ form.motivo.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.descripcion.id_for_label }}" class="form-label">{{ form.descripcion.label }}</label>
+                {{ form.descripcion }}
+                {% if form.descripcion.errors %}
+                    <div class="text-danger small">{{ form.descripcion.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.fecha.id_for_label }}" class="form-label">{{ form.fecha.label }}</label>
+                {{ form.fecha }}
+                {% if form.fecha.errors %}
+                    <div class="text-danger small">{{ form.fecha.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Registrar Solicitud</button>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+<script>
+    // Cargar modelos dinámicamente según la marca seleccionada
+    document.getElementById('id_marca').addEventListener('change', function() {
+        const marcaId = this.value;
+        const modeloSelect = document.getElementById('id_modelo');
+        
+        if (marcaId) {
+            fetch(`{% url 'cargar_modelos' %}?marca_id=${marcaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    modeloSelect.innerHTML = '<option value="">Seleccione un modelo</option>';
+                    data.forEach(modelo => {
+                        const option = document.createElement('option');
+                        option.value = modelo.id;
+                        option.textContent = modelo.nombre;
+                        modeloSelect.appendChild(option);
+                    });
+                });
+        } else {
+            modeloSelect.innerHTML = '<option value="">Seleccione primero una marca</option>';
+        }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,67 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="{% url 'dashboard' %}">Niki Lauda</a>
+
+        <ul class="navbar-nav me-auto">
+
+            {% if user.is_authenticated and user.perfilusuario %}
+                {% if user.perfilusuario.rol == "RECEPCIONISTA" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'registrar_solicitud' %}">Registrar Solicitud</a>
+                    </li>
+                {% endif %}
+
+                {% if user.perfilusuario.rol == "ENCARGADO_TALLER" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'planificacion' %}">Planificación</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inventario' %}">Inventario</a>
+                    </li>
+                {% endif %}
+
+                {% if user.perfilusuario.rol == "MECANICO" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'mis_trabajos' %}">Mis Trabajos</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'herramientas' %}">Herramientas</a>
+                    </li>
+                {% endif %}
+
+                {% if user.perfilusuario.rol == "ENCARGADO_BODEGA" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'inventario' %}">Inventario</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'herramientas' %}">Herramientas</a>
+                    </li>
+                {% endif %}
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'notificaciones' %}">
+                        Notificaciones
+                        {% if notif_no_leidas > 0 %}
+                            <span class="badge bg-danger">{{ notif_no_leidas }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+            {% endif %}
+
+        </ul>
+
+        {% if user.is_authenticated %}
+            <span class="navbar-text text-white me-3">
+                {{ user.username }}{% if user.perfilusuario %} ({{ user.perfilusuario.get_rol_display }}){% endif %}
+            </span>
+            <a class="btn btn-danger" href="{% url 'logout' %}">Salir</a>
+        {% else %}
+            <a class="btn btn-primary" href="{% url 'login' %}">Iniciar Sesión</a>
+            <a class="btn btn-outline-light ms-2" href="{% url 'registro' %}">Registrarse</a>
+        {% endif %}
+
+    </div>
+</nav>

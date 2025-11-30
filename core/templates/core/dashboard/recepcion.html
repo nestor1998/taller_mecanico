@@ -1,0 +1,35 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+</nav>
+
+<h3>Dashboard - Recepcionista</h3>
+<p class="text-muted">Bienvenido al sistema de gestión del taller</p>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-primary">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'registrar_solicitud' %}" class="btn btn-primary btn-lg">
+                    📝 Registrar Nueva Solicitud
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if notif_no_leidas > 0 %}
+<div class="alert alert-warning">
+    <strong>⚠️ Tienes {{ notif_no_leidas }} notificación{{ notif_no_leidas|pluralize:"es" }} sin leer.</strong>
+    <a href="{% url 'notificaciones' %}" class="alert-link">Ver notificaciones</a>
+</div>
+{% endif %}
+
+{% endblock %}

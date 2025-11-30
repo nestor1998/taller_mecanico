@@ -1,0 +1,47 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<h3>Notificaciones</h3>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Tipo</th>
+            <th>Mensaje</th>
+            <th>Fecha</th>
+            <th>Orden</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for n in notificaciones %}
+        <tr class="{% if not n.leida %}table-warning{% endif %}">
+            <td>{{ n.get_tipo_display }}</td>
+            <td>{{ n.mensaje }}</td>
+            <td>{{ n.creada_en|date:"d/m/Y H:i" }}</td>
+            <td>
+                {% if n.orden %}
+                    OT #{{ n.orden.id }}
+                {% else %}
+                    --
+                {% endif %}
+            </td>
+            <td>
+                {% if n.leida %}
+                    ✔ Leída
+                {% else %}
+                    <a href="{% url 'notificacion_leida' n.id %}" 
+                       class="btn btn-sm btn-outline-success">
+                        Marcar como leída
+                    </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center">No tienes notificaciones.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

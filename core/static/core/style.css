@@ -1,0 +1,787 @@
+/*
+ * CSS Premium para Taller Mecánico Niki Lauda
+ * Paleta de colores: Negro #0A0A0A, Rojo Ferrari #EB0000, Blanco #F5F5F5, Gris #CCCCCC
+ */
+
+:root {
+    --color-negro: #0A0A0A;
+    --color-rojo: #EB0000;
+    --color-blanco: #F5F5F5;
+    --color-gris: #CCCCCC;
+    --color-gris-oscuro: #333333;
+    --color-gris-claro: #E5E5E5;
+    --sombra-suave: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --sombra-media: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --sombra-fuerte: 0 6px 20px rgba(235, 0, 0, 0.2);
+    --transicion: all 0.3s ease;
+}
+
+/* ============================
+   RESET Y BASE
+   ============================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-blanco);
+    color: var(--color-negro);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* ============================
+   NAVBAR ESTILO FERRARI
+   ============================ */
+
+.navbar {
+    background: linear-gradient(135deg, var(--color-negro) 0%, #1a1a1a 100%) !important;
+    border-bottom: 3px solid var(--color-rojo);
+    box-shadow: var(--sombra-media);
+    padding: 0.75rem 0;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--color-blanco) !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: var(--transicion);
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand:hover {
+    color: var(--color-rojo) !important;
+    transform: scale(1.05);
+}
+
+.nav-link {
+    color: var(--color-gris) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    transition: var(--transicion);
+    border-radius: 4px;
+    margin: 0 0.25rem;
+}
+
+.nav-link:hover {
+    color: var(--color-blanco) !important;
+    background-color: rgba(235, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.navbar-text {
+    color: var(--color-gris) !important;
+    font-weight: 500;
+}
+
+/* Badge de notificaciones */
+.badge {
+    background-color: var(--color-rojo) !important;
+    color: var(--color-blanco) !important;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* ============================
+   BOTONES ESTILO FERRARI
+   ============================ */
+
+.btn {
+    border-radius: 6px;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    transition: var(--transicion);
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.875rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-rojo) 0%, #c80000 100%);
+    color: var(--color-blanco);
+    box-shadow: var(--sombra-suave);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #c80000 0%, var(--color-rojo) 100%);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-fuerte);
+    color: var(--color-blanco);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: var(--color-blanco);
+    box-shadow: var(--sombra-suave);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    color: var(--color-blanco);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, var(--color-rojo) 0%, #c80000 100%);
+    color: var(--color-blanco);
+    box-shadow: var(--sombra-suave);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #c80000 0%, var(--color-rojo) 100%);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-fuerte);
+    color: var(--color-blanco);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    color: var(--color-negro);
+    box-shadow: var(--sombra-suave);
+}
+
+.btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    color: var(--color-negro);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--color-gris-oscuro) 0%, #555555 100%);
+    color: var(--color-blanco);
+    box-shadow: var(--sombra-suave);
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(135deg, #555555 0%, var(--color-gris-oscuro) 100%);
+    transform: translateY(-2px);
+    color: var(--color-blanco);
+}
+
+.btn-outline-light {
+    border: 2px solid var(--color-blanco);
+    color: var(--color-blanco);
+    background: transparent;
+}
+
+.btn-outline-light:hover {
+    background: var(--color-blanco);
+    color: var(--color-negro);
+    transform: translateY(-2px);
+}
+
+.btn-sm {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+}
+
+.btn-lg {
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+}
+
+/* ============================
+   CARDS ESTILO PREMIUM
+   ============================ */
+
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: var(--sombra-suave);
+    transition: var(--transicion);
+    background: var(--color-blanco);
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: var(--sombra-media);
+    transform: translateY(-4px);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--color-negro) 0%, #1a1a1a 100%);
+    color: var(--color-blanco);
+    border-bottom: 3px solid var(--color-rojo);
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.card.border-primary {
+    border: 2px solid var(--color-rojo) !important;
+}
+
+.card.border-warning {
+    border: 2px solid #ffc107 !important;
+}
+
+.card.border-danger {
+    border: 2px solid var(--color-rojo) !important;
+}
+
+.card.border-info {
+    border: 2px solid #17a2b8 !important;
+}
+
+/* ============================
+   FORMULARIOS ESTILO PREMIUM
+   ============================ */
+
+.form-control,
+.form-select {
+    border: 2px solid var(--color-gris);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    transition: var(--transicion);
+    background-color: var(--color-blanco);
+    color: var(--color-negro);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--color-rojo);
+    box-shadow: 0 0 0 0.2rem rgba(235, 0, 0, 0.25);
+    outline: none;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--color-negro);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.form-check-input:checked {
+    background-color: var(--color-rojo);
+    border-color: var(--color-rojo);
+}
+
+.form-check-input:focus {
+    border-color: var(--color-rojo);
+    box-shadow: 0 0 0 0.2rem rgba(235, 0, 0, 0.25);
+}
+
+/* ============================
+   TABLAS ESTILIZADAS
+   ============================ */
+
+.table {
+    background: var(--color-blanco);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--sombra-suave);
+}
+
+.table thead {
+    background: linear-gradient(135deg, var(--color-negro) 0%, #1a1a1a 100%);
+    color: var(--color-blanco);
+}
+
+.table thead th {
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.85rem;
+}
+
+.table tbody tr {
+    transition: var(--transicion);
+    border-bottom: 1px solid var(--color-gris-claro);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(235, 0, 0, 0.05);
+    transform: scale(1.01);
+}
+
+.table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+.table-danger {
+    background-color: rgba(235, 0, 0, 0.1) !important;
+}
+
+.table-warning {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+}
+
+/* ============================
+   BREADCRUMBS ESTILIZADOS
+   ============================ */
+
+.breadcrumb {
+    background: var(--color-blanco);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    box-shadow: var(--sombra-suave);
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb-item a {
+    color: var(--color-rojo);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transicion);
+}
+
+.breadcrumb-item a:hover {
+    color: #c80000;
+    text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+    color: var(--color-negro);
+    font-weight: 600;
+}
+
+/* ============================
+   ALERTAS CUSTOM
+   ============================ */
+
+.alert {
+    border-radius: 8px;
+    border: none;
+    padding: 1rem 1.5rem;
+    box-shadow: var(--sombra-suave);
+    font-weight: 500;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(235, 0, 0, 0.1) 0%, rgba(235, 0, 0, 0.05) 100%);
+    color: #c80000;
+    border-left: 4px solid var(--color-rojo);
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, rgba(23, 162, 184, 0.1) 0%, rgba(23, 162, 184, 0.05) 100%);
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+/* ============================
+   LOGIN Y REGISTRO ESTILO FERRARI
+   ============================ */
+
+body:has(.container.py-5) {
+    background: linear-gradient(135deg, var(--color-negro) 0%, #1a1a1a 50%, var(--color-negro) 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+}
+
+.container.py-5 {
+    max-width: 600px;
+    width: 100%;
+}
+
+.container.py-5 .card {
+    border: 2px solid var(--color-rojo);
+    box-shadow: var(--sombra-fuerte);
+    width: 100%;
+}
+
+.container.py-5 .card-header {
+    background: linear-gradient(135deg, var(--color-rojo) 0%, #c80000 100%);
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.container.py-5 .card-header h3 {
+    color: var(--color-blanco);
+    margin: 0;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.5rem;
+}
+
+.container.py-5 .card-body {
+    background: var(--color-blanco);
+    padding: 2rem;
+}
+
+.container.py-5 .form-control {
+    border: 2px solid var(--color-gris);
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+}
+
+.container.py-5 .form-control:focus {
+    border-color: var(--color-rojo);
+    box-shadow: 0 0 0 0.2rem rgba(235, 0, 0, 0.25);
+}
+
+.container.py-5 .form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--color-negro);
+}
+
+.container.py-5 .btn-primary {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.container.py-5 a {
+    color: var(--color-rojo);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transicion);
+}
+
+.container.py-5 a:hover {
+    text-decoration: underline;
+    color: #c80000;
+}
+
+.container.py-5 hr {
+    margin: 1.5rem 0;
+    border-color: var(--color-gris);
+}
+
+/* ============================
+   DASHBOARDS ESTILO PREMIUM
+   ============================ */
+
+.display-4 {
+    color: var(--color-rojo);
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+    color: var(--color-negro);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 3px solid var(--color-rojo);
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+h5 {
+    color: var(--color-negro);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Cards de estadísticas */
+.card.border-warning .card-header,
+.card.border-danger .card-header,
+.card.border-info .card-header {
+    background: linear-gradient(135deg, var(--color-negro) 0%, #1a1a1a 100%);
+}
+
+.card.border-warning .card-header {
+    border-bottom-color: #ffc107;
+}
+
+.card.border-danger .card-header {
+    border-bottom-color: var(--color-rojo);
+}
+
+.card.border-info .card-header {
+    border-bottom-color: #17a2b8;
+}
+
+/* ============================
+   BADGES ESTILIZADOS
+   ============================ */
+
+.badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+    color: var(--color-negro) !important;
+}
+
+.bg-danger {
+    background: linear-gradient(135deg, var(--color-rojo) 0%, #c80000 100%) !important;
+}
+
+.bg-secondary {
+    background: linear-gradient(135deg, var(--color-gris-oscuro) 0%, #555555 100%) !important;
+}
+
+/* ============================
+   INPUTS Y SELECTS
+   ============================ */
+
+select.form-control,
+select.form-select {
+    cursor: pointer;
+}
+
+input[type="date"],
+input[type="number"],
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea.form-control {
+    transition: var(--transicion);
+}
+
+input[type="date"]:focus,
+input[type="number"]:focus,
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea.form-control:focus {
+    border-color: var(--color-rojo);
+    box-shadow: 0 0 0 0.2rem rgba(235, 0, 0, 0.25);
+}
+
+/* ============================
+   UTILIDADES
+   ============================ */
+
+.text-muted {
+    color: #6c757d !important;
+}
+
+.mb-3 {
+    margin-bottom: 1rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mt-3 {
+    margin-top: 1rem !important;
+}
+
+.me-2 {
+    margin-right: 0.5rem !important;
+}
+
+.me-3 {
+    margin-right: 1rem !important;
+}
+
+.ms-2 {
+    margin-left: 0.5rem !important;
+}
+
+/* ============================
+   RESPONSIVE
+   ============================ */
+
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem !important;
+        font-size: 0.9rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .table {
+        font-size: 0.85rem;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 0.5rem;
+    }
+}
+
+/* ============================
+   ANIMACIONES
+   ============================ */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card,
+.alert,
+.table {
+    animation: fadeIn 0.5s ease;
+}
+
+/* ============================
+   SCROLLBAR CUSTOM
+   ============================ */
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-gris-claro);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-rojo);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #c80000;
+}
+
+/* ============================
+   FOCUS STATES MEJORADOS
+   ============================ */
+
+*:focus {
+    outline: none;
+}
+
+.btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(235, 0, 0, 0.5);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--color-rojo);
+    box-shadow: 0 0 0 0.2rem rgba(235, 0, 0, 0.25);
+}
+
+/* ============================
+   LINKS ESTILIZADOS
+   ============================ */
+
+a {
+    color: var(--color-rojo);
+    text-decoration: none;
+    transition: var(--transicion);
+}
+
+a:hover {
+    color: #c80000;
+    text-decoration: underline;
+}
+
+/* ============================
+   ESPACIADO Y LAYOUT
+   ============================ */
+
+.container {
+    max-width: 1200px;
+}
+
+.container.mt-4 {
+    padding: 2rem 1rem;
+}
+
+/* Separadores */
+hr {
+    border: none;
+    border-top: 2px solid var(--color-gris);
+    margin: 2rem 0;
+}
+
+/* ============================
+   MEJORAS ESPECÍFICAS
+   ============================ */
+
+/* Input groups */
+.input-group-text {
+    background: var(--color-gris-claro);
+    border: 2px solid var(--color-gris);
+    color: var(--color-negro);
+    font-weight: 600;
+}
+
+/* List groups */
+.list-group-item {
+    border: 1px solid var(--color-gris-claro);
+    transition: var(--transicion);
+}
+
+.list-group-item:hover {
+    background-color: rgba(235, 0, 0, 0.05);
+    border-color: var(--color-rojo);
+}
+
+/* Pagination */
+.pagination .page-link {
+    color: var(--color-rojo);
+    border-color: var(--color-gris);
+}
+
+.pagination .page-link:hover {
+    background-color: var(--color-rojo);
+    color: var(--color-blanco);
+    border-color: var(--color-rojo);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--color-rojo);
+    border-color: var(--color-rojo);
+}
+

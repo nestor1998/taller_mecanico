@@ -1,0 +1,93 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'planificacion' %}">Planificación</a></li>
+        <li class="breadcrumb-item active">Detalle OT #{{ ot.id }}</li>
+    </ol>
+</nav>
+
+<h3>Asignar Trabajo - OT #{{ ot.id }}</h3>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">Datos del Cliente y Vehículo</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Cliente:</strong> {{ ot.cliente.nombre }} ({{ ot.cliente.rut }})</p>
+        <p><strong>Vehículo:</strong> {{ ot.vehiculo.patente }} - {{ ot.vehiculo.marca }} {{ ot.vehiculo.modelo }} ({{ ot.vehiculo.anio }})</p>
+        <p><strong>Kilometraje:</strong> {{ ot.vehiculo.kilometraje }} km</p>
+        <p><strong>Motivo:</strong> {{ ot.motivo_ingreso }}</p>
+        <p><strong>Descripción:</strong> {{ ot.descripcion_problema }}</p>
+        <p><strong>Estado actual:</strong> <span class="badge bg-secondary">{{ ot.estado.nombre }}</span></p>
+        <p><strong>Fecha de ingreso:</strong> {{ ot.fecha_ingreso }}</p>
+    </div>
+</div>
+
+{% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>Errores en el formulario:</strong>
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Asignar Recursos</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="{{ form.mecanico.id_for_label }}" class="form-label">{{ form.mecanico.label }}</label>
+                {{ form.mecanico }}
+                {% if form.mecanico.errors %}
+                    <div class="text-danger small">{{ form.mecanico.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.zona.id_for_label }}" class="form-label">{{ form.zona.label }}</label>
+                {{ form.zona }}
+                {% if form.zona.errors %}
+                    <div class="text-danger small">{{ form.zona.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.fecha_estimada.id_for_label }}" class="form-label">{{ form.fecha_estimada.label }}</label>
+                {{ form.fecha_estimada }}
+                {% if form.fecha_estimada.errors %}
+                    <div class="text-danger small">{{ form.fecha_estimada.errors }}</div>
+                {% endif %}
+                <small class="form-text text-muted">Debe ser posterior a la fecha de ingreso ({{ ot.fecha_ingreso }})</small>
+            </div>
+
+            <button type="submit" class="btn btn-success">Confirmar Asignación</button>
+            <a href="{% url 'planificacion' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{% url 'generar_informe_pdf' ot.id %}" class="btn btn-info">
+        📄 Descargar Informe PDF
+    </a>
+    <a href="{% url 'control_calidad' ot.id %}" class="btn btn-warning">
+        ✅ Control de Calidad
+    </a>
+</div>
+
+{% endblock %}

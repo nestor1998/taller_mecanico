@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Helvetica, Arial, sans-serif; }
+        h1, h2, h3 { border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .section { margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #444; padding: 6px; font-size: 12px; }
+        th { background: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+<h1>Informe de Trabajo - OT #{{ ot.id }}</h1>
+
+<div class="section">
+    <h3>Datos del Cliente</h3>
+    <p><strong>Nombre:</strong> {{ ot.cliente.nombre }}</p>
+    <p><strong>RUT:</strong> {{ ot.cliente.rut }}</p>
+    <p><strong>Teléfono:</strong> {{ ot.cliente.telefono }}</p>
+</div>
+
+<div class="section">
+    <h3>Datos del Vehículo</h3>
+    <p><strong>Patente:</strong> {{ ot.vehiculo.patente }}</p>
+    <p><strong>Marca:</strong> {{ ot.vehiculo.marca.nombre }}</p>
+    <p><strong>Modelo:</strong> {{ ot.vehiculo.modelo.nombre }}</p>
+    <p><strong>Kilometraje:</strong> {{ ot.vehiculo.kilometraje }} km</p>
+</div>
+
+<div class="section">
+    <h3>Resumen de Servicios</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Servicio</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in ot.servicios.all %}
+            <tr>
+                <td>{{ item.servicio.nombre }}</td>
+                <td>${{ item.precio }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p><strong>Total Servicios:</strong> ${{ total_servicios }}</p>
+</div>
+
+<div class="section">
+    <h3>Repuestos Usados</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Repuesto</th>
+                <th>Cantidad</th>
+                <th>Precio Unit.</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in ot.repuestos.all %}
+            <tr>
+                <td>{{ item.repuesto.nombre }}</td>
+                <td>{{ item.cantidad }}</td>
+                <td>${{ item.precio_unitario }}</td>
+                <td>${{ item.total }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p><strong>Total Repuestos:</strong> ${{ total_repuestos }}</p>
+</div>
+
+<div class="section">
+    <h3>Resumen General</h3>
+    <p><strong>Tiempo total de trabajo:</strong> {{ tiempo_total }} minutos</p>
+    <p><strong>Costo Total:</strong> ${{ total_general }}</p>
+</div>
+
+<div class="section">
+    <h3>Observaciones del Mecánico</h3>
+    {% if ot.bitacoras.all %}
+        {% for bit in ot.bitacoras.all %}
+            <p><strong>{{ bit.fecha|date:"d/m/Y H:i" }}</strong> - {{ bit.descripcion }}</p>
+            <p style="margin-left: 20px; font-size: 11px;">
+                Estado: {{ bit.get_estado_avance_display }} | 
+                Tiempo: {{ bit.tiempo_ejecucion_minutos }} minutos
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>No hay bitácoras registradas.</p>
+    {% endif %}
+</div>
+
+<div class="section">
+    <h3>Firmas</h3>
+    <p><strong>Mecánico:</strong> {% if ot.mecanico %}{{ ot.mecanico.nombre }}{% else %}No asignado{% endif %}</p>
+    <p><strong>Encargado:</strong> ________________________________ </p>
+</div>
+
+{% if ot.control_calidad %}
+<div class="section">
+    <h3>Control de Calidad</h3>
+    <p><strong>Resultado:</strong> {{ ot.control_calidad.get_resultado_display }}</p>
+    <p><strong>Fecha:</strong> {{ ot.control_calidad.fecha|date:"d/m/Y H:i" }}</p>
+    <p><strong>Responsable:</strong> {{ ot.control_calidad.responsable }}</p>
+</div>
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<h3>Movimiento de Stock - {{ repuesto.nombre }}</h3>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <label>Tipo de Movimiento</label>
+    <select name="tipo" class="form-control mb-3">
+        <option value="entrada">Entrada</option>
+        <option value="salida">Salida</option>
+    </select>
+
+    <label>Cantidad</label>
+    <input type="number" class="form-control" name="cantidad" required>
+
+    <button class="btn btn-warning mt-3">Guardar</button>
+</form>
+
+{% endblock %}

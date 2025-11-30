@@ -1,0 +1,58 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+</nav>
+
+<h3>Dashboard - Encargado de Bodega</h3>
+<p class="text-muted">Gestión de inventario y herramientas</p>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">⚠️ Repuestos en Stock Bajo</h5>
+            </div>
+            <div class="card-body text-center">
+                <h1 class="display-4">{{ stock_bajo }}</h1>
+                <p class="text-muted mb-0">Repuestos con stock < 3 unidades</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <a href="{% url 'inventario' %}" class="btn btn-warning me-2">
+                    📦 Inventario de Repuestos
+                </a>
+                <a href="{% url 'herramientas' %}" class="btn btn-secondary me-2">
+                    🔨 Herramientas
+                </a>
+                <a href="{% url 'notificaciones' %}" class="btn btn-danger">
+                    🔔 Notificaciones
+                    {% if notif_no_leidas > 0 %}
+                        <span class="badge bg-light text-dark">{{ notif_no_leidas }}</span>
+                    {% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if stock_bajo > 0 %}
+<div class="alert alert-warning">
+    <strong>⚠️ Atención:</strong> Tienes {{ stock_bajo }} repuesto{{ stock_bajo|pluralize:"s" }} con stock bajo. 
+    <a href="{% url 'inventario' %}" class="alert-link">Revisar inventario</a>
+</div>
+{% endif %}
+
+{% endblock %}

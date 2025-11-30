@@ -1,0 +1,109 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'inventario' %}">Inventario</a></li>
+        <li class="breadcrumb-item active">Movimiento de Stock</li>
+    </ol>
+</nav>
+
+<h3>Movimiento de Stock - {{ repuesto.nombre }}</h3>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">Información del Repuesto</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Código:</strong> {{ repuesto.codigo }}</p>
+        <p><strong>Stock actual:</strong> <span class="badge {% if repuesto.stock < 3 %}bg-danger{% elif repuesto.stock < 5 %}bg-warning{% else %}bg-success{% endif %}">{{ repuesto.stock }} unidades</span></p>
+        <p><strong>Precio de venta:</strong> ${{ repuesto.precio_venta|floatformat:0 }}</p>
+    </div>
+</div>
+
+{% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>Errores en el formulario:</strong>
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Registrar Movimiento</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="{{ form.tipo.id_for_label }}" class="form-label">{{ form.tipo.label }}</label>
+                {{ form.tipo }}
+                {% if form.tipo.errors %}
+                    <div class="text-danger small">{{ form.tipo.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.cantidad.id_for_label }}" class="form-label">{{ form.cantidad.label }}</label>
+                {{ form.cantidad }}
+                {% if form.cantidad.errors %}
+                    <div class="text-danger small">{{ form.cantidad.errors }}</div>
+                {% endif %}
+                <small class="form-text text-muted">
+                    Para <strong>salida</strong>, asegúrate de que haya suficiente stock disponible.
+                </small>
+            </div>
+
+            <div class="alert alert-warning">
+                <strong>⚠️ Advertencia:</strong> 
+                <span id="stock-warning"></span>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Registrar Movimiento</button>
+    <a href="{% url 'inventario' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+<script>
+    // Mostrar advertencia según el tipo de movimiento
+    const tipoSelect = document.getElementById('id_tipo');
+    const cantidadInput = document.getElementById('id_cantidad');
+    const stockWarning = document.getElementById('stock-warning');
+    const stockActual = {{ repuesto.stock }};
+
+    function actualizarAdvertencia() {
+        const tipo = tipoSelect.value;
+        const cantidad = parseInt(cantidadInput.value) || 0;
+        
+        if (tipo === 'salida' && cantidad > stockActual) {
+            stockWarning.textContent = `No hay suficiente stock. Disponible: ${stockActual} unidades.`;
+            stockWarning.parentElement.style.display = 'block';
+        } else if (tipo === 'salida') {
+            stockWarning.textContent = `Después de este movimiento, el stock será: ${stockActual - cantidad} unidades.`;
+            stockWarning.parentElement.style.display = 'block';
+        } else if (tipo === 'entrada') {
+            stockWarning.textContent = `Después de este movimiento, el stock será: ${stockActual + cantidad} unidades.`;
+            stockWarning.parentElement.style.display = 'block';
+        } else {
+            stockWarning.parentElement.style.display = 'none';
+        }
+    }
+
+    tipoSelect.addEventListener('change', actualizarAdvertencia);
+    cantidadInput.addEventListener('input', actualizarAdvertencia);
+</script>
+
+{% endblock %}
+

@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<h3>Editar Repuesto: {{ repuesto.nombre }}</h3>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <label>Nombre</label>
+    <input name="nombre" class="form-control" value="{{ repuesto.nombre }}">
+
+    <label>Descripción</label>
+    <textarea name="descripcion" class="form-control">{{ repuesto.descripcion }}</textarea>
+
+    <label>Marca</label>
+    <input name="marca" class="form-control" value="{{ repuesto.marca }}">
+
+    <label>Precio Venta</label>
+    <input type="number" name="precio_venta" class="form-control" value="{{ repuesto.precio_venta }}">
+
+    <button class="btn btn-success mt-3">Guardar</button>
+</form>
+
+{% endblock %}

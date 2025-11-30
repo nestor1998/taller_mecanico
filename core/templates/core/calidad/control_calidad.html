@@ -1,0 +1,182 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'planificacion' %}">Planificación</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'detalle_ot' ot.id %}">OT #{{ ot.id }}</a></li>
+        <li class="breadcrumb-item active">Control de Calidad</li>
+    </ol>
+</nav>
+
+<h3>Control de Calidad - OT #{{ ot.id }}</h3>
+<p class="text-muted">Vehículo: {{ ot.vehiculo.patente }} - {{ ot.vehiculo.marca }} {{ ot.vehiculo.modelo }}</p>
+
+{% if modo == "ver" %}
+
+<div class="alert alert-info">
+    <strong>ℹ️ Información:</strong> Esta OT ya cuenta con Control de Calidad registrado.
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">Resultado del Control</h5>
+    </div>
+    <div class="card-body">
+        <p><strong>Resultado:</strong> 
+            <span class="badge {% if control.resultado == 'APROBADO' %}bg-success{% else %}bg-danger{% endif %}">
+                {{ control.get_resultado_display }}
+            </span>
+        </p>
+        <p><strong>Responsable:</strong> {{ control.responsable }}</p>
+        <p><strong>Fecha:</strong> {{ control.fecha|date:"d/m/Y H:i" }}</p>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">Checklist de Revisión</h5>
+    </div>
+    <div class="card-body">
+        <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Prueba de Ruta
+                <span class="badge {% if control.prueba_ruta_ok %}bg-success{% else %}bg-danger{% endif %}">
+                    {{ control.prueba_ruta_ok|yesno:"✓,✗" }}
+                </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Fluidos Verificados
+                <span class="badge {% if control.fluidos_verificados %}bg-success{% else %}bg-danger{% endif %}">
+                    {{ control.fluidos_verificados|yesno:"✓,✗" }}
+                </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Luces y Sistema Eléctrico
+                <span class="badge {% if control.luces_sistema_electrico_ok %}bg-success{% else %}bg-danger{% endif %}">
+                    {{ control.luces_sistema_electrico_ok|yesno:"✓,✗" }}
+                </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Herramientas Retiradas
+                <span class="badge {% if control.herramientas_retiradas %}bg-success{% else %}bg-danger{% endif %}">
+                    {{ control.herramientas_retiradas|yesno:"✓,✗" }}
+                </span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                Vehículo Limpio
+                <span class="badge {% if control.vehiculo_limpio %}bg-success{% else %}bg-danger{% endif %}">
+                    {{ control.vehiculo_limpio|yesno:"✓,✗" }}
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+{% if control.observaciones_generales %}
+<div class="card mb-3">
+    <div class="card-header">
+        <h5 class="mb-0">Observaciones</h5>
+    </div>
+    <div class="card-body">
+        <p>{{ control.observaciones_generales }}</p>
+    </div>
+</div>
+{% endif %}
+
+<a href="{% url 'detalle_ot' ot.id %}" class="btn btn-primary">Volver a Detalle OT</a>
+
+{% else %}
+
+{% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>Errores en el formulario:</strong>
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ field.label }}: {{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="mb-0">Checklist de Revisión</h5>
+        </div>
+        <div class="card-body">
+            <div class="form-check mb-2">
+                {{ form.prueba_ruta_ok }}
+                <label for="{{ form.prueba_ruta_ok.id_for_label }}" class="form-check-label">
+                    Prueba de Ruta OK
+                </label>
+            </div>
+
+            <div class="form-check mb-2">
+                {{ form.fluidos_verificados }}
+                <label for="{{ form.fluidos_verificados.id_for_label }}" class="form-check-label">
+                    Fluidos Verificados
+                </label>
+            </div>
+
+            <div class="form-check mb-2">
+                {{ form.luces_sistema_electrico_ok }}
+                <label for="{{ form.luces_sistema_electrico_ok.id_for_label }}" class="form-check-label">
+                    Luces y Sistema Eléctrico OK
+                </label>
+            </div>
+
+            <div class="form-check mb-2">
+                {{ form.herramientas_retiradas }}
+                <label for="{{ form.herramientas_retiradas.id_for_label }}" class="form-check-label">
+                    Herramientas Retiradas
+                </label>
+            </div>
+
+            <div class="form-check mb-2">
+                {{ form.vehiculo_limpio }}
+                <label for="{{ form.vehiculo_limpio.id_for_label }}" class="form-check-label">
+                    Vehículo Limpio
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="mb-0">Resultado Final</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="{{ form.resultado.id_for_label }}" class="form-label">{{ form.resultado.label }}</label>
+                {{ form.resultado }}
+                {% if form.resultado.errors %}
+                    <div class="text-danger small">{{ form.resultado.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.observaciones_generales.id_for_label }}" class="form-label">{{ form.observaciones_generales.label }}</label>
+                {{ form.observaciones_generales }}
+                {% if form.observaciones_generales.errors %}
+                    <div class="text-danger small">{{ form.observaciones_generales.errors }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">Registrar Control de Calidad</button>
+    <a href="{% url 'detalle_ot' ot.id %}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+{% endif %}
+
+{% endblock %}

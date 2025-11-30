@@ -1,0 +1,41 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<h3>Herramientas del Taller</h3>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Estado</th>
+            <th>Responsable</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for h in herramientas %}
+        <tr>
+            <td>{{ h.codigo }}</td>
+            <td>{{ h.nombre }}</td>
+            <td>{{ h.estado }}</td>
+            <td>{{ h.responsable_asignado|default:"--" }}</td>
+
+            <td>
+                {% if h.estado == "OPERATIVA" %}
+                    <a href="{% url 'retirar_herramienta' h.id %}" class="btn btn-success btn-sm">
+                        Retirar
+                    </a>
+                {% elif h.responsable_asignado and h.responsable_asignado.nombre == user.username %}
+                    <a href="{% url 'devolver_herramienta' h.id %}" class="btn btn-warning btn-sm">
+                        Devolver
+                    </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
