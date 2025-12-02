@@ -18,7 +18,7 @@
             </div>
             <div class="card-body">
                 <a href="{% url 'registrar_solicitud' %}" class="btn btn-primary btn-lg">
-                    📝 Registrar Nueva Solicitud
+                    Registrar Nueva Solicitud
                 </a>
             </div>
         </div>
@@ -27,7 +27,7 @@
 
 {% if notif_no_leidas > 0 %}
 <div class="alert alert-warning">
-    <strong>⚠️ Tienes {{ notif_no_leidas }} notificación{{ notif_no_leidas|pluralize:"es" }} sin leer.</strong>
+    <strong>Tienes {{ notif_no_leidas }} notificación{{ notif_no_leidas|pluralize:"es" }} sin leer.</strong>
     <a href="{% url 'notificaciones' %}" class="alert-link">Ver notificaciones</a>
 </div>
 {% endif %}

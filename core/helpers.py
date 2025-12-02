@@ -9,7 +9,7 @@ def obtener_mecanico_desde_usuario(user):
     Obtiene el objeto Mecanico asociado a un usuario de forma segura.
     
     Busca el Mecanico por el nombre completo del usuario (first_name + last_name).
-    Retorna None si no se encuentra o si el usuario no es mecánico.
+    Si no existe, lo crea automáticamente para evitar errores.
     
     Args:
         user: Usuario de Django
@@ -29,13 +29,25 @@ def obtener_mecanico_desde_usuario(user):
     
     # Buscar por nombre completo
     nombre_completo = f"{user.first_name} {user.last_name}".strip()
-    if nombre_completo:
-        mecanico = Mecanico.objects.filter(nombre=nombre_completo).first()
-        if mecanico:
-            return mecanico
     
-    # Fallback: buscar por username si el nombre no coincide
-    # Esto es para compatibilidad con datos existentes
-    mecanico = Mecanico.objects.filter(nombre=user.username).first()
+    # Si no hay nombre completo, usar username como fallback
+    if not nombre_completo or nombre_completo == "":
+        nombre_completo = user.username
+    
+    # Buscar el mecánico
+    mecanico = Mecanico.objects.filter(nombre=nombre_completo).first()
+    
+    # Si no existe, crearlo automáticamente
+    if not mecanico:
+        from .models import EspecialidadMecanico
+        # Obtener o crear especialidad por defecto
+        especialidad_default, _ = EspecialidadMecanico.objects.get_or_create(
+            nombre="General"
+        )
+        mecanico = Mecanico.objects.create(
+            nombre=nombre_completo,
+            especialidad=especialidad_default
+        )
+    
     return mecanico
 

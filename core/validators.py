@@ -16,7 +16,7 @@ def validar_rut_chileno(value):
     rut_limpio = value.replace(".", "").replace("-", "").upper()
 
     if len(rut_limpio) < 8 or len(rut_limpio) > 9:
-        raise ValidationError("El RUT debe tener entre 8 y 9 caracteres (sin puntos ni guión).")
+        raise ValidationError("RUT inválido")
 
     # Separar número y dígito verificador
     if len(rut_limpio) == 9:
@@ -28,11 +28,11 @@ def validar_rut_chileno(value):
 
     # Validar que el número sea numérico
     if not numero.isdigit():
-        raise ValidationError("El RUT debe contener solo números (excepto el dígito verificador).")
+        raise ValidationError("RUT inválido")
 
     # Validar dígito verificador
     if dv not in "0123456789K":
-        raise ValidationError("El dígito verificador debe ser un número o K.")
+        raise ValidationError("RUT inválido")
 
     # Calcular dígito verificador
     multiplicadores = [2, 3, 4, 5, 6, 7, 2, 3]
@@ -53,7 +53,7 @@ def validar_rut_chileno(value):
         dv_calculado = str(dv_calculado)
 
     if dv != dv_calculado:
-        raise ValidationError(f"El RUT no es válido. El dígito verificador debería ser {dv_calculado}.")
+        raise ValidationError("RUT inválido")
 
 
 def validar_patente_chilena(value):

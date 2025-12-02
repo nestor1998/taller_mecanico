@@ -13,15 +13,19 @@ from .models import RolUsuario
 
 class RegistroUsuarioForm(UserCreationForm):
     """Formulario de registro de usuario con rol."""
-    nombre = forms.CharField(max_length=150, required=True, label="Nombre completo")
+    nombre = forms.CharField(max_length=150, required=True, label="Nombre")
+    apellido = forms.CharField(max_length=150, required=True, label="Apellido")
     rol = forms.ChoiceField(choices=RolUsuario.choices, required=True, label="Rol")
 
     class Meta:
         model = User
-        fields = ("username", "password1", "password2", "nombre", "rol")
+        fields = ("username", "password1", "password2", "nombre", "apellido", "rol")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields['username'].label = "Usuario"
+        self.fields['password1'].label = "Contraseña"
+        self.fields['password2'].label = "Repita la contraseña"
         self.fields['username'].help_text = None
         self.fields['password1'].help_text = None
         self.fields['password2'].help_text = None
@@ -33,7 +37,7 @@ class RegistrarSolicitudForm(forms.Form):
     rut = forms.CharField(max_length=12, validators=[validar_rut_chileno], label="RUT")
     nombre = forms.CharField(max_length=150, label="Nombre")
     telefono = forms.CharField(max_length=20, label="Teléfono")
-    email = forms.EmailField(required=False, label="Email")
+    email = forms.EmailField(required=False, label="Email", error_messages={'invalid': 'Ingrese una dirección de correo electrónico válida.'})
 
     # Datos del Vehículo
     patente = forms.CharField(max_length=10, validators=[validar_patente_chilena], label="Patente")

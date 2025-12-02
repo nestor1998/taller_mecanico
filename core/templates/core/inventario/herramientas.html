@@ -49,18 +49,18 @@
                 <td>
                     {% if user.is_authenticated and user.perfilusuario and user.perfilusuario.rol == "ENCARGADO_BODEGA" %}
                         <a href="{% url 'editar_herramienta' h.id %}" class="btn btn-primary btn-sm">
-                            ✏️ Editar
+                            Editar
                         </a>
                     {% endif %}
                     {% if user.is_authenticated and user.perfilusuario and user.perfilusuario.rol == "MECANICO" %}
                         {% if h.estado == "OPERATIVA" %}
                             <a href="{% url 'retirar_herramienta' h.id %}" class="btn btn-warning btn-sm">
-                                📥 Retirar
+                                Retirar
                             </a>
                         {% elif h.responsable_asignado %}
                             {# Verificar si el usuario actual es el responsable usando helper en la vista #}
                             <a href="{% url 'devolver_herramienta' h.id %}" class="btn btn-success btn-sm">
-                                📤 Devolver
+                                Devolver
                             </a>
                         {% endif %}
                     {% endif %}

@@ -22,6 +22,9 @@ from .forms import (
 from .decorators import requiere_perfil_usuario, requiere_rol
 from .validators import validar_fecha_estimada_mayor_ingreso
 from .helpers import obtener_mecanico_desde_usuario
+from .services.inventory_manager import InventoryManager
+from .services.assignment_service import AssignmentService
+from .services.notification_service import NotificationService
 
 
 # ============================
@@ -65,7 +68,14 @@ def registro_view(request):
         if form.is_valid():
             user = form.save()
             nombre = form.cleaned_data["nombre"]
+            apellido = form.cleaned_data["apellido"]
+            nombre_completo = f"{nombre} {apellido}"
             rol = form.cleaned_data["rol"]
+            
+            # Actualizar first_name y last_name del usuario
+            user.first_name = nombre
+            user.last_name = apellido
+            user.save()
             
             # Crear PerfilUsuario
             perfil = PerfilUsuario.objects.create(usuario=user, rol=rol)
@@ -77,7 +87,7 @@ def registro_view(request):
                     nombre="General"
                 )
                 Mecanico.objects.create(
-                    nombre=nombre,
+                    nombre=nombre_completo,
                     especialidad=especialidad_default
                 )
             
@@ -244,8 +254,15 @@ def planificacion(request):
 @login_required
 @requiere_rol("ENCARGADO_TALLER")
 def detalle_ot(request, ot_id):
-    """Detalle y asignación de OT."""
+    """
+    Detalle y asignación de OT.
+    Usa AssignmentService con Inyección de Dependencias.
+    """
     ot = get_object_or_404(OrdenTrabajo, pk=ot_id)
+    
+    # Inyección de Dependencias: Crear servicios
+    inventory_manager = InventoryManager()  # Dependencia
+    assignment_service = AssignmentService(inventory_manager)  # DI: servicio recibe manager
     
     if request.method == "POST":
         form = AsignarOTForm(request.POST)
@@ -262,51 +279,39 @@ def detalle_ot(request, ot_id):
                 return render(request, "core/encargado/detalle_ot.html", {
                     "ot": ot,
                     "form": form,
-                    "mecanicos": Mecanico.objects.all(),
-                    "zonas": ZonaTrabajo.objects.filter(activa=True),
+                    "mecanicos": assignment_service.obtener_mecanicos_disponibles(),
+                    "zonas": assignment_service.obtener_zonas_disponibles(),
                 })
             
-            ot.mecanico = mecanico
-            ot.zona_trabajo = zona
-            ot.fecha_estimada_entrega = fecha_estimada
+            # Usar servicio con DI para asignar OT
+            # El servicio usa InventoryManager inyectado para verificar stock
+            exito, mensaje = assignment_service.asignar_ot(
+                orden=ot,
+                mecanico=mecanico,
+                zona=zona,
+                fecha_estimada=fecha_estimada,
+                emisor=request.user.perfilusuario
+            )
             
-            estado_en_progreso = EstadoOT.objects.get_or_create(nombre="EN_PROGRESO")[0]
-            ot.estado = estado_en_progreso
-            ot.en_lista_espera = False
-            ot.save()
-            
-            # Crear notificación al mecánico
-            # Buscar el perfil del mecánico por el nombre completo
-            perfil_mecanico = None
-            if mecanico.nombre:
-                # Buscar usuario que tenga first_name + last_name igual al nombre del mecánico
-                nombre_parts = mecanico.nombre.split(maxsplit=1)
-                if len(nombre_parts) == 2:
-                    perfil_mecanico = PerfilUsuario.objects.filter(
-                        rol="MECANICO",
-                        usuario__first_name=nombre_parts[0],
-                        usuario__last_name=nombre_parts[1]
-                    ).first()
-            
-            if perfil_mecanico:
-                Notificacion.objects.create(
-                    tipo="MENSAJE_GENERAL",
-                    orden=ot,
-                    mensaje=f"Se le ha asignado la OT #{ot.id}.",
-                    emisor=request.user.perfilusuario,
-                    receptor=perfil_mecanico
-                )
-            
-            messages.success(request, "Asignación realizada correctamente.")
-            return redirect("planificacion")
+            if exito:
+                messages.success(request, mensaje)
+                return redirect("planificacion")
+            else:
+                messages.error(request, mensaje)
+                return render(request, "core/encargado/detalle_ot.html", {
+                    "ot": ot,
+                    "form": form,
+                    "mecanicos": assignment_service.obtener_mecanicos_disponibles(),
+                    "zonas": assignment_service.obtener_zonas_disponibles(),
+                })
     else:
         form = AsignarOTForm()
     
     return render(request, "core/encargado/detalle_ot.html", {
         "ot": ot,
         "form": form,
-        "mecanicos": Mecanico.objects.all(),
-        "zonas": ZonaTrabajo.objects.filter(activa=True),
+        "mecanicos": assignment_service.obtener_mecanicos_disponibles(),
+        "zonas": assignment_service.obtener_zonas_disponibles(),
     })
 
 
@@ -379,27 +384,14 @@ def control_calidad(request, ot_id):
             
             ot.save()
             
-            # Notificación al mecánico
-            if ot.mecanico:
-                # Buscar el perfil del mecánico por el nombre completo
-                perfil_mecanico = None
-                if ot.mecanico.nombre:
-                    nombre_parts = ot.mecanico.nombre.split(maxsplit=1)
-                    if len(nombre_parts) == 2:
-                        perfil_mecanico = PerfilUsuario.objects.filter(
-                            rol="MECANICO",
-                            usuario__first_name=nombre_parts[0],
-                            usuario__last_name=nombre_parts[1]
-                        ).first()
-                
-                if perfil_mecanico:
-                    Notificacion.objects.create(
-                        tipo="MENSAJE_GENERAL",
-                        orden=ot,
-                        mensaje=f"Control de calidad {control.resultado} para la OT #{ot.id}.",
-                        emisor=request.user.perfilusuario,
-                        receptor=perfil_mecanico
-                    )
+            # Notificación automática usando NotificationService con patrón Observer
+            # La señal post_save también notificará automáticamente
+            notification_service = NotificationService()
+            notification_service.notificar_control_calidad(
+                orden=ot,
+                resultado=control.resultado,
+                emisor=request.user.perfilusuario
+            )
             
             messages.success(request, "Control de calidad registrado.")
             return redirect("detalle_ot", ot_id=ot.id)
@@ -435,23 +427,16 @@ def mis_trabajos(request):
             estado__nombre__in=["EN_PROGRESO", "PENDIENTE"]
         ).order_by("fecha_ingreso")
         
-        # ALERTAS DE ATRASO (HU010)
-        perfil_encargado = PerfilUsuario.objects.filter(rol="ENCARGADO_TALLER").first()
+        # ALERTAS DE ATRASO (HU010) - Usa NotificationService con patrón Observer
+        notification_service = NotificationService()
         
         for ot in trabajos:
             if ot.fecha_estimada_entrega and ot.estado.nombre != "FINALIZADO":
                 if date.today() > ot.fecha_estimada_entrega:
-                    if not Notificacion.objects.filter(
-                        tipo="ATRASO_TRABAJO",
-                        orden=ot
-                    ).exists() and perfil_encargado:
-                        Notificacion.objects.create(
-                            tipo="ATRASO_TRABAJO",
-                            orden=ot,
-                            mensaje=f"La OT #{ot.id} está atrasada.",
-                            emisor=request.user.perfilusuario,
-                            receptor=perfil_encargado
-                        )
+                    notification_service.notificar_atraso(
+                        orden=ot,
+                        emisor=request.user.perfilusuario
+                    )
     
     return render(request, "core/mecanico/mis_trabajos.html", {"trabajos": trabajos})
 
@@ -459,7 +444,10 @@ def mis_trabajos(request):
 @login_required
 @requiere_rol("MECANICO")
 def registrar_bitacora(request, ot_id):
-    """Registrar bitácora de trabajo."""
+    """
+    Registrar bitácora de trabajo.
+    Usa NotificationService con patrón Observador para notificaciones automáticas.
+    """
     ot = get_object_or_404(OrdenTrabajo, pk=ot_id)
     
     # Obtener mecánico de forma segura
@@ -468,6 +456,9 @@ def registrar_bitacora(request, ot_id):
     if not mecanico_obj:
         messages.warning(request, "Tu perfil de mecánico no está completamente configurado. Contacta al administrador.")
         return redirect("mis_trabajos")
+    
+    # Inyección de Dependencias: Crear servicio de notificaciones
+    notification_service = NotificationService()
     
     if request.method == "POST":
         form = BitacoraForm(request.POST, request.FILES)
@@ -482,18 +473,21 @@ def registrar_bitacora(request, ot_id):
             for img in imagenes:
                 FotoBitacora.objects.create(bitacora=bitacora, imagen=img)
             
-            # Solicitud de cambio (HU007)
+            # Notificación automática de bitácora registrada (patrón Observer)
+            # La señal post_save también notificará automáticamente
+            notification_service.notificar_bitacora_registrada(
+                orden=ot,
+                emisor=request.user.perfilusuario
+            )
+            
+            # Solicitud de cambio (HU007) - Usa NotificationService
             solicitud_cambio = form.cleaned_data.get("solicitud_cambio", "").strip()
             if solicitud_cambio:
-                perfil_encargado = PerfilUsuario.objects.filter(rol="ENCARGADO_TALLER").first()
-                if perfil_encargado:
-                    Notificacion.objects.create(
-                        tipo="SOLICITUD_CAMBIO",
-                        orden=ot,
-                        mensaje=solicitud_cambio,
-                        emisor=request.user.perfilusuario,
-                        receptor=perfil_encargado
-                    )
+                notification_service.notificar_solicitud_cambio(
+                    orden=ot,
+                    mensaje=solicitud_cambio,
+                    emisor=request.user.perfilusuario
+                )
             
             messages.success(request, "Bitácora registrada correctamente.")
             return redirect("mis_trabajos")
@@ -513,32 +507,22 @@ def registrar_bitacora(request, ot_id):
 @login_required
 @requiere_rol("ENCARGADO_BODEGA", "ENCARGADO_TALLER")
 def inventario(request):
-    """Vista de inventario de repuestos."""
+    """
+    Vista de inventario de repuestos.
+    Usa InventoryManager con Inyección de Dependencias.
+    """
+    # Inyección de Dependencias: Crear InventoryManager
+    inventory_manager = InventoryManager()
+    
     repuestos = Repuesto.objects.all().order_by("nombre")
     
-    # ALERTA DE STOCK BAJO (solo crear notificación si hay stock bajo y no existe notificación reciente)
-    perfil_encargado = PerfilUsuario.objects.filter(rol="ENCARGADO_TALLER").first()
-    
-    for r in repuestos:
-        if r.stock < 3:
-            # Verificar si ya existe una notificación reciente (últimas 24 horas)
-            from django.utils import timezone
-            from datetime import timedelta
-            hace_24h = timezone.now() - timedelta(hours=24)
-            
-            if not Notificacion.objects.filter(
-                tipo="MENSAJE_GENERAL",
-                orden__isnull=True,
-                mensaje__contains=f"Repuesto {r.nombre} bajo en stock",
-                creada_en__gte=hace_24h
-            ).exists() and perfil_encargado:
-                Notificacion.objects.create(
-                    tipo="MENSAJE_GENERAL",
-                    orden=None,  # Notificación general, no asociada a OT
-                    mensaje=f"Repuesto {r.nombre} bajo en stock (solo {r.stock} unidades).",
-                    emisor=request.user.perfilusuario,
-                    receptor=perfil_encargado
-                )
+    # ALERTA DE STOCK BAJO - Usa InventoryManager
+    repuestos_stock_bajo = inventory_manager.verificar_stock_bajo(umbral=3)
+    for repuesto in repuestos_stock_bajo:
+        inventory_manager.crear_alerta_stock_bajo(
+            repuesto=repuesto,
+            emisor=request.user.perfilusuario
+        )
     
     return render(request, "core/inventario/inventario.html", {
         "repuestos": repuestos,
@@ -546,7 +530,7 @@ def inventario(request):
 
 
 @login_required
-@requiere_rol("ENCARGADO_BODEGA")
+@requiere_rol("ENCARGADO_BODEGA", "ENCARGADO_TALLER")
 def editar_repuesto(request, id):
     """Editar repuesto."""
     repuesto = get_object_or_404(Repuesto, id=id)
@@ -567,7 +551,7 @@ def editar_repuesto(request, id):
 
 
 @login_required
-@requiere_rol("ENCARGADO_BODEGA")
+@requiere_rol("ENCARGADO_BODEGA", "ENCARGADO_TALLER")
 def movimiento_repuesto(request, id):
     """Movimiento de stock de repuesto."""
     repuesto = get_object_or_404(Repuesto, id=id)
@@ -578,19 +562,22 @@ def movimiento_repuesto(request, id):
             tipo = form.cleaned_data["tipo"]
             cantidad = form.cleaned_data["cantidad"]
             
-            if tipo == "entrada":
-                repuesto.stock += cantidad
-            else:  # salida
-                if repuesto.stock < cantidad:
-                    messages.error(request, f"No hay suficiente stock. Disponible: {repuesto.stock}")
-                    return render(request, "core/inventario/movimiento_repuesto.html", {
-                        "repuesto": repuesto,
-                        "form": form,
-                    })
-                repuesto.stock -= cantidad
+            # Inyección de Dependencias: Usar InventoryManager
+            inventory_manager = InventoryManager()
+            exito, mensaje = inventory_manager.realizar_movimiento_stock(
+                repuesto_id=repuesto.id,
+                tipo=tipo,
+                cantidad=cantidad
+            )
             
-            repuesto.save()
-            messages.success(request, "Movimiento de stock realizado.")
+            if not exito:
+                messages.error(request, mensaje)
+                return render(request, "core/inventario/movimiento_repuesto.html", {
+                    "repuesto": repuesto,
+                    "form": form,
+                })
+            
+            messages.success(request, mensaje)
             return redirect("inventario")
     else:
         form = MovimientoRepuestoForm()
@@ -602,7 +589,7 @@ def movimiento_repuesto(request, id):
 
 
 @login_required
-@requiere_rol("ENCARGADO_BODEGA")
+@requiere_rol("ENCARGADO_BODEGA", "MECANICO")
 def herramientas(request):
     """Lista de herramientas."""
     herramientas = Herramienta.objects.all()

@@ -13,7 +13,7 @@
     --sombra-suave: 0 2px 8px rgba(0, 0, 0, 0.1);
     --sombra-media: 0 4px 12px rgba(0, 0, 0, 0.15);
     --sombra-fuerte: 0 6px 20px rgba(235, 0, 0, 0.2);
-    --transicion: all 0.3s ease;
+    --transicion: none;
 }
 
 /* ============================
@@ -51,20 +51,17 @@ body {
     color: var(--color-blanco) !important;
     text-transform: uppercase;
     letter-spacing: 2px;
-    transition: var(--transicion);
     padding: 0.5rem 1rem;
 }
 
 .navbar-brand:hover {
     color: var(--color-rojo) !important;
-    transform: scale(1.05);
 }
 
 .nav-link {
     color: var(--color-gris) !important;
     font-weight: 500;
     padding: 0.5rem 1rem !important;
-    transition: var(--transicion);
     border-radius: 4px;
     margin: 0 0.25rem;
 }
@@ -72,7 +69,6 @@ body {
 .nav-link:hover {
     color: var(--color-blanco) !important;
     background-color: rgba(235, 0, 0, 0.1);
-    transform: translateY(-2px);
 }
 
 .navbar-text {
@@ -88,12 +84,6 @@ body {
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 600;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.7; }
 }
 
 /* ============================
@@ -104,7 +94,6 @@ body {
     border-radius: 6px;
     font-weight: 600;
     padding: 0.6rem 1.5rem;
-    transition: var(--transicion);
     border: none;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -119,8 +108,6 @@ body {
 
 .btn-primary:hover {
     background: linear-gradient(135deg, #c80000 0%, var(--color-rojo) 100%);
-    transform: translateY(-2px);
-    box-shadow: var(--sombra-fuerte);
     color: var(--color-blanco);
 }
 
@@ -131,8 +118,6 @@ body {
 }
 
 .btn-success:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
     color: var(--color-blanco);
 }
 
@@ -144,8 +129,6 @@ body {
 
 .btn-danger:hover {
     background: linear-gradient(135deg, #c80000 0%, var(--color-rojo) 100%);
-    transform: translateY(-2px);
-    box-shadow: var(--sombra-fuerte);
     color: var(--color-blanco);
 }
 
@@ -156,8 +139,6 @@ body {
 }
 
 .btn-warning:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
     color: var(--color-negro);
 }
 
@@ -169,7 +150,6 @@ body {
 
 .btn-secondary:hover {
     background: linear-gradient(135deg, #555555 0%, var(--color-gris-oscuro) 100%);
-    transform: translateY(-2px);
     color: var(--color-blanco);
 }
 
@@ -182,7 +162,6 @@ body {
 .btn-outline-light:hover {
     background: var(--color-blanco);
     color: var(--color-negro);
-    transform: translateY(-2px);
 }
 
 .btn-sm {
@@ -203,24 +182,57 @@ body {
     border: none;
     border-radius: 12px;
     box-shadow: var(--sombra-suave);
-    transition: var(--transicion);
     background: var(--color-blanco);
     overflow: hidden;
 }
 
-.card:hover {
-    box-shadow: var(--sombra-media);
-    transform: translateY(-4px);
-}
+/* Sin efectos hover en cards */
 
 .card-header {
     background: linear-gradient(135deg, var(--color-negro) 0%, #1a1a1a 100%);
-    color: var(--color-blanco);
+    color: var(--color-blanco) !important;
     border-bottom: 3px solid var(--color-rojo);
     padding: 1rem 1.5rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
+}
+
+/* Asegurar que card-header sin clases bg-* tengan texto blanco */
+.card-header:not(.bg-warning):not(.bg-info):not(.bg-danger):not(.bg-primary):not(.bg-success) {
+    color: var(--color-blanco) !important;
+}
+
+/* Títulos en card-header siempre blancos - mayor especificidad */
+.card-header h3,
+.card-header h5,
+.card-header h1,
+.card-header h2,
+.card-header h4,
+.card-header h6,
+.card-header .h3,
+.card-header .h5,
+.card-header .h1,
+.card-header .h2,
+.card-header .h4,
+.card-header .h6,
+.card-header * {
+    color: var(--color-blanco) !important;
+}
+
+/* Asegurar que títulos en cualquier contexto con fondo oscuro sean blancos */
+.bg-dark h3,
+.bg-dark h5,
+.bg-dark h1,
+.bg-dark h2,
+.bg-dark h4,
+.bg-dark h6,
+.bg-dark .h3,
+.bg-dark .h5,
+.table-dark h3,
+.table-dark h5,
+.table-dark th {
+    color: var(--color-blanco) !important;
 }
 
 .card-body {
@@ -252,7 +264,6 @@ body {
     border: 2px solid var(--color-gris);
     border-radius: 6px;
     padding: 0.75rem 1rem;
-    transition: var(--transicion);
     background-color: var(--color-blanco);
     color: var(--color-negro);
 }
@@ -309,14 +320,10 @@ body {
 }
 
 .table tbody tr {
-    transition: var(--transicion);
     border-bottom: 1px solid var(--color-gris-claro);
 }
 
-.table tbody tr:hover {
-    background-color: rgba(235, 0, 0, 0.05);
-    transform: scale(1.01);
-}
+/* Sin efectos hover en tablas */
 
 .table tbody td {
     padding: 1rem;
@@ -347,12 +354,10 @@ body {
     color: var(--color-rojo);
     text-decoration: none;
     font-weight: 500;
-    transition: var(--transicion);
 }
 
 .breadcrumb-item a:hover {
     color: #c80000;
-    text-decoration: underline;
 }
 
 .breadcrumb-item.active {
@@ -469,7 +474,6 @@ body:has(.container.py-5) {
     color: var(--color-rojo);
     text-decoration: none;
     font-weight: 600;
-    transition: var(--transicion);
 }
 
 .container.py-5 a:hover {
@@ -573,7 +577,7 @@ input[type="text"],
 input[type="email"],
 input[type="password"],
 textarea.form-control {
-    transition: var(--transicion);
+    /* Sin transiciones */
 }
 
 input[type="date"]:focus,
@@ -652,25 +656,8 @@ textarea.form-control:focus {
 }
 
 /* ============================
-   ANIMACIONES
+   ANIMACIONES - DESHABILITADAS
    ============================ */
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.card,
-.alert,
-.table {
-    animation: fadeIn 0.5s ease;
-}
 
 /* ============================
    SCROLLBAR CUSTOM
@@ -689,9 +676,7 @@ textarea.form-control:focus {
     border-radius: 5px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #c80000;
-}
+/* Sin efectos hover en scrollbar */
 
 /* ============================
    FOCUS STATES MEJORADOS
@@ -718,12 +703,10 @@ textarea.form-control:focus {
 a {
     color: var(--color-rojo);
     text-decoration: none;
-    transition: var(--transicion);
 }
 
 a:hover {
     color: #c80000;
-    text-decoration: underline;
 }
 
 /* ============================
@@ -760,13 +743,9 @@ hr {
 /* List groups */
 .list-group-item {
     border: 1px solid var(--color-gris-claro);
-    transition: var(--transicion);
 }
 
-.list-group-item:hover {
-    background-color: rgba(235, 0, 0, 0.05);
-    border-color: var(--color-rojo);
-}
+/* Sin efectos hover en list-group */
 
 /* Pagination */
 .pagination .page-link {
@@ -774,11 +753,7 @@ hr {
     border-color: var(--color-gris);
 }
 
-.pagination .page-link:hover {
-    background-color: var(--color-rojo);
-    color: var(--color-blanco);
-    border-color: var(--color-rojo);
-}
+/* Sin efectos hover en paginación */
 
 .pagination .page-item.active .page-link {
     background-color: var(--color-rojo);

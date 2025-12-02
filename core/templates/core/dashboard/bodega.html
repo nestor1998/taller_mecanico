@@ -14,7 +14,7 @@
     <div class="col-md-6">
         <div class="card border-warning">
             <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0">⚠️ Repuestos en Stock Bajo</h5>
+                <h5 class="mb-0">Repuestos en Stock Bajo</h5>
             </div>
             <div class="card-body text-center">
                 <h1 class="display-4">{{ stock_bajo }}</h1>
@@ -32,13 +32,13 @@
             </div>
             <div class="card-body">
                 <a href="{% url 'inventario' %}" class="btn btn-warning me-2">
-                    📦 Inventario de Repuestos
+                    Inventario de Repuestos
                 </a>
                 <a href="{% url 'herramientas' %}" class="btn btn-secondary me-2">
-                    🔨 Herramientas
+                    Herramientas
                 </a>
                 <a href="{% url 'notificaciones' %}" class="btn btn-danger">
-                    🔔 Notificaciones
+                    Notificaciones
                     {% if notif_no_leidas > 0 %}
                         <span class="badge bg-light text-dark">{{ notif_no_leidas }}</span>
                     {% endif %}
@@ -50,7 +50,7 @@
 
 {% if stock_bajo > 0 %}
 <div class="alert alert-warning">
-    <strong>⚠️ Atención:</strong> Tienes {{ stock_bajo }} repuesto{{ stock_bajo|pluralize:"s" }} con stock bajo. 
+    <strong>Atención:</strong> Tienes {{ stock_bajo }} repuesto{{ stock_bajo|pluralize:"s" }} con stock bajo. 
     <a href="{% url 'inventario' %}" class="alert-link">Revisar inventario</a>
 </div>
 {% endif %}

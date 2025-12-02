@@ -14,7 +14,7 @@
     <div class="col-md-4">
         <div class="card border-warning">
             <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0">📋 Pendientes</h5>
+                <h5 class="mb-0">Pendientes</h5>
             </div>
             <div class="card-body text-center">
                 <h1 class="display-4">{{ pendientes }}</h1>
@@ -26,7 +26,7 @@
     <div class="col-md-4">
         <div class="card border-info">
             <div class="card-header bg-info text-white">
-                <h5 class="mb-0">⚙️ En Progreso</h5>
+                <h5 class="mb-0">En Progreso</h5>
             </div>
             <div class="card-body text-center">
                 <h1 class="display-4">{{ en_progreso }}</h1>
@@ -38,7 +38,7 @@
     <div class="col-md-4">
         <div class="card border-danger">
             <div class="card-header bg-danger text-white">
-                <h5 class="mb-0">⚠️ Atrasadas</h5>
+                <h5 class="mb-0">Atrasadas</h5>
             </div>
             <div class="card-body text-center">
                 <h1 class="display-4">{{ atrasadas }}</h1>
@@ -56,13 +56,13 @@
             </div>
             <div class="card-body">
                 <a href="{% url 'planificacion' %}" class="btn btn-primary me-2">
-                    📅 Planificación
+                    Planificación
                 </a>
                 <a href="{% url 'inventario' %}" class="btn btn-warning me-2">
-                    📦 Inventario
+                    Inventario
                 </a>
                 <a href="{% url 'notificaciones' %}" class="btn btn-danger">
-                    🔔 Notificaciones
+                    Notificaciones
                     {% if notif_no_leidas > 0 %}
                         <span class="badge bg-light text-dark">{{ notif_no_leidas }}</span>
                     {% endif %}
@@ -74,7 +74,7 @@
 
 {% if atrasadas > 0 %}
 <div class="alert alert-danger">
-    <strong>⚠️ Atención:</strong> Tienes {{ atrasadas }} orden{{ atrasadas|pluralize:"es" }} atrasada{{ atrasadas|pluralize:"s" }}. 
+    <strong>Atención:</strong> Tienes {{ atrasadas }} orden{{ atrasadas|pluralize:"es" }} atrasada{{ atrasadas|pluralize:"s" }}. 
     <a href="{% url 'planificacion' %}" class="alert-link">Revisar planificación</a>
 </div>
 {% endif %}

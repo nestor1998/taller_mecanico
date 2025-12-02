@@ -47,6 +47,14 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="{{ form.apellido.id_for_label }}" class="form-label">{{ form.apellido.label }}</label>
+                            {{ form.apellido }}
+                            {% if form.apellido.errors %}
+                                <div class="text-danger small">{{ form.apellido.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
                             <label for="{{ form.rol.id_for_label }}" class="form-label">{{ form.rol.label }}</label>
                             {{ form.rol }}
                             {% if form.rol.errors %}

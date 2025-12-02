@@ -1,4 +1,0 @@
-Django>=5.2.5
-xhtml2pdf>=0.2.11
-Pillow>=10.0.0
-
