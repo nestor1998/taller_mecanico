@@ -12,7 +12,7 @@ from .models import (
     PerfilUsuario, Cliente, Vehiculo, MarcaVehiculo, ModeloVehiculo,
     OrdenTrabajo, EstadoOT, BitacoraTrabajo, FotoBitacora,
     Repuesto, Herramienta, HerramientaEnUso, Mecanico, ZonaTrabajo,
-    ControlCalidad, Notificacion, EspecialidadMecanico
+    ControlCalidad, Notificacion, TipoNotificacion, EspecialidadMecanico
 )
 from .forms import (
     RegistroUsuarioForm, RegistrarSolicitudForm, AsignarOTForm,
@@ -686,6 +686,34 @@ def devolver_herramienta(request, id):
     herramienta.estado = "OPERATIVA"
     herramienta.responsable_asignado = None
     herramienta.save()
+    
+    # Obtener perfil del mecánico (emisor de la notificación)
+    perfil_mecanico = request.user.perfilusuario
+    
+    # Crear notificaciones para los roles relevantes
+    mensaje = f"El mecánico {mecanico_obj.nombre} ha devuelto la herramienta '{herramienta.nombre}'."
+    
+    # Notificar a Encargado de Bodega
+    perfil_encargado_bodega = PerfilUsuario.objects.filter(rol="ENCARGADO_BODEGA").first()
+    if perfil_encargado_bodega:
+        Notificacion.objects.create(
+            tipo=TipoNotificacion.MENSAJE_GENERAL,
+            orden=None,
+            mensaje=mensaje,
+            emisor=perfil_mecanico,
+            receptor=perfil_encargado_bodega
+        )
+    
+    # Notificar a Encargado de Taller
+    perfil_encargado_taller = PerfilUsuario.objects.filter(rol="ENCARGADO_TALLER").first()
+    if perfil_encargado_taller:
+        Notificacion.objects.create(
+            tipo=TipoNotificacion.MENSAJE_GENERAL,
+            orden=None,
+            mensaje=mensaje,
+            emisor=perfil_mecanico,
+            receptor=perfil_encargado_taller
+        )
     
     messages.success(request, "Herramienta devuelta correctamente.")
     return redirect("herramientas")

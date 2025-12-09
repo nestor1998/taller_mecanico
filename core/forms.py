@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from datetime import datetime
 from .models import (
     Cliente, Vehiculo, MarcaVehiculo, ModeloVehiculo,
     OrdenTrabajo, BitacoraTrabajo, Repuesto, Herramienta,
@@ -43,7 +44,15 @@ class RegistrarSolicitudForm(forms.Form):
     patente = forms.CharField(max_length=10, validators=[validar_patente_chilena], label="Patente")
     marca = forms.ModelChoiceField(queryset=MarcaVehiculo.objects.all(), label="Marca")
     modelo = forms.ModelChoiceField(queryset=ModeloVehiculo.objects.none(), label="Modelo")
-    anio = forms.IntegerField(min_value=1900, max_value=2100, label="Año")
+    anio = forms.IntegerField(
+        min_value=1900, 
+        max_value=2100, 
+        label="Año",
+        error_messages={
+            'max_value': 'El año no puede ser mayor al año actual.',
+            'min_value': 'El año debe ser mayor o igual a 1900.'
+        }
+    )
     kilometraje = forms.IntegerField(min_value=0, label="Kilometraje")
 
     # Solicitud
@@ -53,6 +62,13 @@ class RegistrarSolicitudForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Establecer el año máximo como el año actual
+        anio_actual = datetime.now().year
+        self.fields['anio'].max_value = anio_actual
+        # Actualizar el widget para mostrar el máximo en el HTML
+        self.fields['anio'].widget.attrs['max'] = anio_actual
+        self.fields['anio'].widget.attrs['min'] = 1900
+        
         if 'marca' in self.data:
             try:
                 marca_id = int(self.data.get('marca'))
